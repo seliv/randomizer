@@ -28,21 +28,21 @@
     });
 </script>
 
-<div ng-app="randomizerApp" ng-controller="randomizerController as $ctrl">
-    <table border="1">
+<div ng-app="randomizerApp" ng-controller="randomizerController as $ctrl" style="font-size: 24pt">
+    <table border="1" style="max-width: 400px">
         <tr>
-            <td ng-repeat="p in pals">
-                <input ng-model="tokens[p]" ng-required type="password" placeholder="{{ p }}">
+            <td ng-repeat="p in pals" style="max-width: 25%">
+                <input ng-model="tokens[p]" ng-required type="password" placeholder="{{ p }}" style="font-size: 24pt; max-width: 200px">
             </td>
         </tr>
         <tr ng-if="tokens[pals[0]] && tokens[pals[1]] && tokens[pals[2]] && tokens[pals[3]]">
-            <td ng-repeat="p in pals">
+            <td ng-repeat="p in pals" style="overflow: hidden; text-overflow: ellipsis; max-width: 200px">
                 {{ tokens[p] }}
             </td>
         </tr>
         <tr ng-if="tokens[pals[0]] && tokens[pals[1]] && tokens[pals[2]] && tokens[pals[3]]">
             <td colspan="4">
-                <button ng-disabled="loading" ng-click="$ctrl.go()" style="width: 100%">Generate</button>
+                <button ng-disabled="loading" ng-click="$ctrl.go()" style="width: 100%; font-size: 24pt">Generate</button>
             </td>
         </tr>
     </table>
