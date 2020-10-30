@@ -1,5 +1,61 @@
-<html>
-<body>
-Init.
-</body>
-</html>
+<!DOCTYPE HTML>
+
+<!-- A randomizer to fairly and user-involvedly split a group of four into two subgroups of two -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script>
+    var app = angular.module("randomizerApp", []);
+    app.controller("randomizerController", function($scope) {
+        $scope.pals = ['AS', 'CK', 'MG', 'NZ'];
+        $scope.tokens = {};
+
+        this.go = function() {
+            $scope.seed = $scope.tokens[$scope.pals[0]] +
+                $scope.tokens[$scope.pals[1]] +
+                $scope.tokens[$scope.pals[2]] +
+                $scope.tokens[$scope.pals[3]];
+
+            var hash = 0;
+            for (var i = 0; i < $scope.seed.length; i++) {
+                var chr = $scope.seed.charCodeAt(i);
+                hash = 31 * hash + chr;
+                hash = hash % 2654435761;
+            }
+
+            $scope.hash = hash;
+            $scope.nzMate = hash % 3;
+        };
+    });
+</script>
+
+<div ng-app="randomizerApp" ng-controller="randomizerController as $ctrl">
+    <table border="1">
+        <tr>
+            <td ng-repeat="p in pals">
+                <input ng-model="tokens[p]" ng-required type="password" placeholder="{{ p }}">
+            </td>
+        </tr>
+        <tr ng-if="tokens[pals[0]] && tokens[pals[1]] && tokens[pals[2]] && tokens[pals[3]]">
+            <td ng-repeat="p in pals">
+                {{ tokens[p] }}
+            </td>
+        </tr>
+        <tr ng-if="tokens[pals[0]] && tokens[pals[1]] && tokens[pals[2]] && tokens[pals[3]]">
+            <td colspan="4">
+                <button ng-disabled="loading" ng-click="$ctrl.go()" style="width: 100%">Generate</button>
+            </td>
+        </tr>
+    </table>
+    <div ng-if="hash">
+        <br>
+        <br>
+        Seed string: {{ seed }}
+        <br>
+        Hash calculated: {{ hash }}
+        <br>
+        mod 3 = {{ nzMate }}
+        <br>
+        <br>
+        <b>NZ goes in team with {{ pals[nzMate] }}</b>
+    </div>
+</div>
