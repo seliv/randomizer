@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -cp target/classes:target/dependency/* seliv.randomizer.RandomizerApplication
+web: java -cp target/classes/*:target/dependency/* seliv.randomizer.RandomizerApplication
