@@ -30,7 +30,7 @@
         this.submit = function(pal, token) {
             $scope.hash = null;
             $scope.nzMate = null;
-            $http.post("/tokens/" + pal + "/" + token).then(function(response) {
+            $http.post("/tokens/" + pal + "/" + encodeURIComponent(token)).then(function(response) {
                 console.log("Post /tokens response: ", response);
                 $scope.tokens = response.data;
                 $scope.loadError = null;
