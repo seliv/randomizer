@@ -1,1 +1,1 @@
-web: java -cp target/classes/*:target/dependency/* seliv.randomizer.RandomizerApplication
+web: java -jar target/randomizer-0.0.1-SNAPSHOT.jar 
