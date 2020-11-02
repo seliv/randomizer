@@ -28,8 +28,6 @@ public class RandomizerController {
     @ApiOperation(value = "Returns tokens")
     @GetMapping
     public ResponseEntity<Map<String, String>> getTokenMap() {
-        log.info("UserController.getTokenMap");
-        log.info("tokens = " + tokens);
         return ResponseEntity.ok(tokens);
     }
 
