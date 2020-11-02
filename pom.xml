@@ -15,7 +15,7 @@
     <description>A randomizer to fairly and user-involvedly split a group of four into two subgroups of two</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>8</java.version>
         <swagger-version>2.9.2</swagger-version>
         <maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
         <maven-dependency-plugin-version>3.0.1</maven-dependency-plugin-version>
