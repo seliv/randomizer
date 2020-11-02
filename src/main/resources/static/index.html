@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+
+<!-- A randomizer to fairly and user-involvedly split a group of four into two subgroups of two -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script>
+    var app = angular.module("randomizerApp", []);
+    app.controller("randomizerController", function($scope, $http, $timeout) {
+        $scope.loadError = null;
+        $scope.pals = ['AS', 'CK', 'MG', 'NZ'];
+        $scope.tokens = {};
+
+        this.go = function() {
+            $scope.seed = $scope.tokens[$scope.pals[0]] +
+                $scope.tokens[$scope.pals[1]] +
+                $scope.tokens[$scope.pals[2]] +
+                $scope.tokens[$scope.pals[3]];
+
+            var hash = 0;
+            for (var i = 0; i < $scope.seed.length; i++) {
+                var chr = $scope.seed.charCodeAt(i);
+                hash = 31 * hash + chr;
+                hash = hash % 2654435761;
+            }
+
+            $scope.hash = hash;
+            $scope.nzMate = hash % 3;
+        };
+
+        this.submit = function(pal, token) {
+            $scope.hash = null;
+            $scope.nzMate = null;
+            $http.post("/tokens/" + pal + "/" + token).then(function(response) {
+                console.log("Post /tokens response: ", response);
+                $scope.tokens = response.data;
+                $scope.loadError = null;
+            }, function(error) {
+                console.error("Failed to post tokens: ", error);
+                $scope.loadError = error;
+            });
+        };
+
+        function doPollTokens() {
+            $http.get("/tokens").then(function(response) {
+                console.log("/tokens response: ", response);
+                $scope.tokens = response.data;
+                $scope.loadError = null;
+            }, function(error) {
+                console.error("Failed to load tokens: ", error);
+                $scope.loadError = error;
+            });
+        }
+
+        (function tick() {
+            doPollTokens();
+            $timeout(tick, 1000);
+        })()
+    });
+</script>
+
+<div ng-app="randomizerApp" ng-controller="randomizerController as $ctrl" style="font-size: 24pt">
+    <div ng-show="loadError">
+        <div>
+            Error from server:
+            <pre style="white-space: pre-wrap;">{{ loadError }}</pre>
+        </div>
+    </div>
+    <table border="1" style="max-width: 400px">
+        <tr>
+            <td ng-repeat="p in pals" style="max-width: 25%">
+                <input ng-model="tokens[p]"
+                       ng-required
+                       ng-change="$ctrl.submit(p, tokens[p])"
+                       type="password"
+                       placeholder="{{ p }}"
+                       style="font-size: 24pt; max-width: 200px">
+            </td>
+        </tr>
+        <tr ng-if="tokens[pals[0]] && tokens[pals[1]] && tokens[pals[2]] && tokens[pals[3]]">
+            <td colspan="4">
+                <button ng-disabled="loading" ng-click="$ctrl.go()" style="width: 100%; font-size: 24pt">Reveal tokens and Randomize</button>
+            </td>
+        </tr>
+        <tr ng-if="hash">
+            <td ng-repeat="p in pals" style="overflow: hidden; text-overflow: ellipsis; max-width: 200px">
+                {{ tokens[p] }}
+            </td>
+        </tr>
+    </table>
+    <div ng-if="hash">
+        <br>
+        <br>
+        Seed string: {{ seed }}
+        <br>
+        Hash calculated: {{ hash }}
+        <br>
+        mod 3 = {{ nzMate }}
+        <br>
+        <br>
+        <b>NZ goes in team with {{ pals[nzMate] }}</b>
+    </div>
+</div>
